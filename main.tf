@@ -16,7 +16,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "tf-kirkr-group" {
   name     = "tf-kirkr-group"
-  location = "westeurope"
+  location = var.region
 }
 
 resource "azurerm_virtual_network" "tf-kirkr-vnet" {
