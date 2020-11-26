@@ -106,7 +106,7 @@ resource "azurerm_windows_virtual_machine" "tf-kirkr-win-ad-01" {
   location            = azurerm_resource_group.tf-kirkr-group.location
   size                = "Standard_D4_v3"
   admin_username      = "netapp"
-  admin_password      = "N3t@pp54321!"
+  admin_password      = var.password
   network_interface_ids = [
     azurerm_network_interface.tf-kirk-win-ad-01-nic-01.id,
   ]
@@ -151,7 +151,7 @@ resource "azurerm_virtual_machine_extension" "tf-kirkr-win-ad-01-ext-install-ad"
 
   protected_settings = <<PROTECTED_SETTINGS
     {
-        "commandToExecute": "powershell.exe -Command \"Import-Module ADDSDeployment, ActiveDirectory; $password = ConvertTo-SecureString N3t@pp54321! -AsPlainText -Force; Add-WindowsFeature -name ad-domain-services -IncludeManagementTools; Install-ADDSForest -DomainName anf.test -SafeModeAdministratorPassword $password -Force:$true; shutdown -r -t 10; exit 0\""
+        "commandToExecute": "powershell.exe -Command \"Import-Module ADDSDeployment, ActiveDirectory; $password = ConvertTo-SecureString ${var.password} -AsPlainText -Force; Add-WindowsFeature -name ad-domain-services -IncludeManagementTools; Install-ADDSForest -DomainName anf.test -SafeModeAdministratorPassword $password -Force:$true; shutdown -r -t 10; exit 0\""
     }
 PROTECTED_SETTINGS
 
@@ -175,7 +175,7 @@ resource "azurerm_netapp_account" "tf-kirkr-anf" {
 
   #   active_directory {
   #   username            = "netapp"
-  #   password            = "N3t@pp54321!"
+  #   password            = var.password
   #   smb_server_name     = "anfsmb"
   #   dns_servers         = ["20.0.1.100"]
   #   domain              = "anf.test"
