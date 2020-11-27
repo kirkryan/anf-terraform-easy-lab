@@ -6,5 +6,5 @@ variable "region" {
 
 variable "password" {
   type    = string
-  default = "P@ssword123!"
+  default = "TIN@d98EppWd"
 }
