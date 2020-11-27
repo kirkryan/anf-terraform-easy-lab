@@ -104,7 +104,7 @@ resource "azurerm_windows_virtual_machine" "tf-kirkr-win-ad-01" {
   name                = "ad01"
   resource_group_name = azurerm_resource_group.tf-kirkr-group.name
   location            = azurerm_resource_group.tf-kirkr-group.location
-  size                = "Standard_D4_v3"
+  size                = "Standard_D4s_v3"
   admin_username      = "netapp"
   admin_password      = var.password
   network_interface_ids = [
@@ -123,6 +123,8 @@ resource "azurerm_windows_virtual_machine" "tf-kirkr-win-ad-01" {
     version   = "latest"
   }
 }
+
+# TODO output "azurerm_windows_virtual_machine" { value = azurerm_windows_virtual_machine.tf-kirkr-win-ad-01.private_key_pem }
 
 # Connect the security group to the network interface (Enable RDP connectivity)
 resource "azurerm_network_interface_security_group_association" "tf-kirkr-nsg-asso-02" {
@@ -300,7 +302,7 @@ resource "azurerm_linux_virtual_machine" "tf-kirkr-linux-vm-01" {
   name                            = "tf-kirkr-linux-vm-01"
   resource_group_name             = azurerm_resource_group.tf-kirkr-group.name
   location                        = azurerm_resource_group.tf-kirkr-group.location
-  size                            = "Standard_D4_v3"
+  size                            = "Standard_D4s_v3"
   admin_username                  = "netapp"
   disable_password_authentication = true
   network_interface_ids           = [azurerm_network_interface.tf-kirkr-linux-vm-nic-01.id]
