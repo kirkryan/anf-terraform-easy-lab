@@ -105,7 +105,7 @@ resource "azurerm_windows_virtual_machine" "tf-kirkr-win-ad-01" {
   resource_group_name = azurerm_resource_group.tf-kirkr-group.name
   location            = azurerm_resource_group.tf-kirkr-group.location
   size                = "Standard_D4s_v3"
-  admin_username      = "netapp"
+  admin_username      = var.username
   admin_password      = var.password
   network_interface_ids = [
     azurerm_network_interface.tf-kirk-win-ad-01-nic-01.id,
@@ -153,7 +153,7 @@ resource "azurerm_virtual_machine_extension" "tf-kirkr-win-ad-01-ext-install-ad"
 
   protected_settings = <<PROTECTED_SETTINGS
     {
-        "commandToExecute": "powershell.exe -Command \"Import-Module ADDSDeployment, ActiveDirectory; $password = ConvertTo-SecureString ${var.password} -AsPlainText -Force; Add-WindowsFeature -name ad-domain-services -IncludeManagementTools; Install-ADDSForest -DomainName anf.test -SafeModeAdministratorPassword $password -Force:$true; shutdown -r -t 10; exit 0\""
+        "commandToExecute": "powershell.exe -Command \"Import-Module ADDSDeployment, ActiveDirectory; $password = ConvertTo-SecureString ${var.password} -AsPlainText -Force; Add-WindowsFeature -name ad-domain-services -IncludeManagementTools; Install-ADDSForest -DomainName ${var.domainname} -SafeModeAdministratorPassword $password -Force:$true; shutdown -r -t 10; exit 0\""
     }
 PROTECTED_SETTINGS
 
@@ -176,11 +176,11 @@ resource "azurerm_netapp_account" "tf-kirkr-anf" {
   # Error: Error waiting for creation of NetApp Account "tf-kirkr-anf" (Resource Group "tf-kirkr-group"): Code="BadRequest" Message="Only one active directory allowed within the same region. Account core-west-europe in resource group emea-core-west-europe-anf currently has an active directory connection string." Details=[{"code":"TooManyActiveDirectories","message":"Only one active directory allowed within the same region. Account core-west-europe in resource group emea-core-west-europe-anf currently has an active directory connection string."}]
 
   #   active_directory {
-  #   username            = "netapp"
+  #   username            = var.username
   #   password            = var.password
-  #   smb_server_name     = "anfsmb"
+  #   smb_server_name     = var.smbservername
   #   dns_servers         = ["20.0.1.100"]
-  #   domain              = "anf.test"
+  #   domain              = var.domainname
   # }
 
   depends_on = [
@@ -303,7 +303,7 @@ resource "azurerm_linux_virtual_machine" "tf-kirkr-linux-vm-01" {
   resource_group_name             = azurerm_resource_group.tf-kirkr-group.name
   location                        = azurerm_resource_group.tf-kirkr-group.location
   size                            = "Standard_D4s_v3"
-  admin_username                  = "netapp"
+  admin_username                  = var.username
   disable_password_authentication = true
   network_interface_ids           = [azurerm_network_interface.tf-kirkr-linux-vm-nic-01.id]
 
